@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import pool from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
+import taskRoutes from "./routes/task.routes.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
 
 const app = express();
@@ -31,7 +32,7 @@ app.get("/test-users", async (req, res) => {
     res.status(500).json({ message: "Error fetching users" });
   }
 });
-
+app.use("/api/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
 
 export default app;
