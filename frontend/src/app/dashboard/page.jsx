@@ -3,6 +3,7 @@
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const encryptData = (data) => {
   const ciphertext = CryptoJS.AES.encrypt(
@@ -14,6 +15,7 @@ const encryptData = (data) => {
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tasks, setTasks] = useState([]);
@@ -30,7 +32,18 @@ export default function Dashboard() {
     setTasks(res.data);
   };
 
+  const checkAuth = async () => {
+    try {
+      await axios.get("http://localhost:5000/api/auth/me", {
+        withCredentials: true,
+      });
+    } catch (error) {
+      router.push("/login");
+    }
+  };
+
   useEffect(() => {
+    checkAuth();
     fetchTasks();
   }, [page, search, status]);
 
