@@ -74,3 +74,44 @@ export const deleteTask = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+//pagination
+
+export const getTasks = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+
+    const offset = (page - 1) * limit;
+
+    const { status, search } = req.query;
+
+    let query = `
+      SELECT * FROM tasks
+      WHERE user_id=$1
+    `;
+
+    let values = [req.userId];
+    let index = 2;
+
+    if (status) {
+      query += ` AND status=$${index}`;
+      values.push(status);
+      index++;
+    }
+
+    if (search) {
+      query += ` AND title ILIKE $${index}`;
+      values.push(`%${search}%`);
+      index++;
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`;
+
+    const result = await pool.query(query, values);
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
