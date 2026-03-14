@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pool from "./config/db.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -13,14 +14,15 @@ app.get("/", (req, res) => {
   res.send("API running");
 });
 
-app.get("/test-db", async (req, res) => {
+app.get("/test-users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT NOW()");
+    const result = await pool.query("SELECT * FROM users");
     res.json(result.rows);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Database error" });
+    res.status(500).json({ message: "Error fetching users" });
   }
 });
+
+app.use("/api/auth", authRoutes);
 
 export default app;
