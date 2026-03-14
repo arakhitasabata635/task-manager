@@ -7,6 +7,7 @@ import taskRoutes from "./routes/task.routes.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(
   cors({
