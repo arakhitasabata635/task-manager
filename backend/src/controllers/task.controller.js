@@ -1,8 +1,12 @@
+import { encryptData } from "../utils/encryption.js";
+import { decryptData } from "../utils/encryption.js";
 import pool from "../config/db.js";
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, status } = req.body;
+    const decrypted = decryptData(req.body.data);
+
+    const { title, description, status } = decrypted;
 
     if (!title) {
       return res.status(400).json({
@@ -17,7 +21,9 @@ export const createTask = async (req, res) => {
       [title, description, status || "pending", req.userId],
     );
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({
+      data: encryptData(result.rows[0]),
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
