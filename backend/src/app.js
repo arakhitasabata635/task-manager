@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import pool from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
+import { authMiddleware } from "./middleware/auth.middleware.js";
 
 const app = express();
 
@@ -12,6 +13,14 @@ app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("API running");
+});
+
+//add authenticaation userId
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({
+    message: "Access granted",
+    userId: req.userId,
+  });
 });
 
 app.get("/test-users", async (req, res) => {
