@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   const fetchTasks = async () => {
     const res = await axios.get(
-      `http://localhost:5000/api/tasks?page=${page}&search=${search}&status=${status}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks?page=${page}&search=${search}&status=${status}`,
       { withCredentials: true },
     );
 
@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   const checkAuth = async () => {
     try {
-      await axios.get("http://localhost:5000/api/auth/me", {
+      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
         withCredentials: true,
       });
     } catch (error) {
@@ -67,7 +67,7 @@ export default function Dashboard() {
   };
 
   const deleteTask = async (id) => {
-    await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+    await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}`, {
       withCredentials: true,
     });
 
@@ -78,7 +78,7 @@ export default function Dashboard() {
     const newStatus = task.status === "pending" ? "completed" : "pending";
 
     await axios.put(
-      `http://localhost:5000/api/tasks/${task.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${task.id}`,
       { status: newStatus, id: task.id },
       { withCredentials: true },
     );

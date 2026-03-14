@@ -30,9 +30,12 @@ export default function Register() {
         password,
       });
 
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
-        data: encrypted,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`,
+        {
+          data: encrypted,
+        },
+      );
 
       alert(res.data.message);
 
