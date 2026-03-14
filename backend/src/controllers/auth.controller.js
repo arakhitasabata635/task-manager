@@ -90,7 +90,7 @@ export const loginUser = async (req, res) => {
     // store in http-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // change to true in production
+      secure: true, // change to true in production
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });
