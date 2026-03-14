@@ -1,10 +1,12 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import pool from "../config/db.js";
+import { decryptData, encryptData } from "../utils/encryption.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const decrypted = decryptData(req.body.data);
+    const { email, password } = decrypted;
 
     // validation
     if (!email || !password) {
@@ -36,7 +38,7 @@ export const registerUser = async (req, res) => {
 
     res.status(201).json({
       message: "User registered successfully",
-      user: result.rows[0],
+      user: encryptData(result.rows[0]),
     });
   } catch (error) {
     console.error(error);
@@ -48,7 +50,8 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const decrypted = decryptData(req.body.data);
+    const { email, password } = decrypted;
 
     // validation
     if (!email || !password) {
