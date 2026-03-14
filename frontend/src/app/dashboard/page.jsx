@@ -74,6 +74,18 @@ export default function Dashboard() {
     fetchTasks();
   };
 
+  const toggleStatus = async (task) => {
+    const newStatus = task.status === "pending" ? "completed" : "pending";
+
+    await axios.put(
+      `http://localhost:5000/api/tasks/${task.id}`,
+      { status: newStatus, id: task.id },
+      { withCredentials: true },
+    );
+
+    fetchTasks();
+  };
+
   return (
     <div style={{ padding: "40px", background: "#f5f5f5", minHeight: "100vh" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -98,52 +110,93 @@ export default function Dashboard() {
 
       <h3>Create Task</h3>
 
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "20px",
+          background: "#ffffff",
+          padding: "15px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+        }}
+      >
         <input
-          placeholder="title"
+          placeholder="Task title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          style={{ padding: "8px", flex: 1 }}
+          style={{
+            padding: "10px",
+            flex: 1,
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
         />
 
         <input
-          placeholder="description"
+          placeholder="Task description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{ padding: "8px", flex: 2 }}
+          style={{
+            padding: "10px",
+            flex: 2,
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
         />
 
         <button
           onClick={createTask}
           style={{
-            padding: "8px 15px",
-            background: "#0070f3",
+            padding: "10px 18px",
+            background: "#28a745",
             color: "#fff",
             border: "none",
-            borderRadius: "5px",
+            borderRadius: "6px",
             cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
-          Add Task
+          Add
         </button>
       </div>
 
       <hr />
 
-      <h3>Search & Filter</h3>
+      <h3 style={{ marginTop: "20px" }}>Search & Filter</h3>
 
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "25px",
+          background: "#ffffff",
+          padding: "15px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+        }}
+      >
         <input
-          placeholder="search title"
+          placeholder="Search task title..."
           onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: "8px", flex: 2 }}
+          style={{
+            padding: "10px",
+            flex: 2,
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
         />
 
         <select
           onChange={(e) => setStatus(e.target.value)}
-          style={{ padding: "8px" }}
+          style={{
+            padding: "10px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            background: "#f8f9fa",
+          }}
         >
-          <option value="">All</option>
+          <option value="">All Status</option>
           <option value="pending">Pending</option>
           <option value="completed">Completed</option>
         </select>
@@ -156,29 +209,32 @@ export default function Dashboard() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3,1fr)",
-          gap: "15px",
+          gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
+          gap: "20px",
         }}
       >
         {tasks.map((task) => (
           <div
             key={task.id}
             style={{
-              background: "#fff",
-              padding: "15px",
-              borderRadius: "8px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+              background: "#ffffff",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
             }}
           >
-            <h4>{task.title}</h4>
+            <h4 style={{ marginBottom: "5px" }}>{task.title}</h4>
 
-            <p>{task.description}</p>
+            <p style={{ color: "#555", marginBottom: "10px" }}>
+              {task.description}
+            </p>
 
             <span
               style={{
-                padding: "4px 10px",
+                padding: "4px 12px",
                 borderRadius: "20px",
                 fontSize: "12px",
+                fontWeight: "bold",
                 background: task.status === "completed" ? "#28a745" : "#ffc107",
                 color: "#fff",
               }}
@@ -186,34 +242,93 @@ export default function Dashboard() {
               {task.status}
             </span>
 
-            <br />
-            <br />
+            <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => toggleStatus(task)}
+                style={{
+                  padding: "6px 12px",
+                  background: "#0070f3",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Toggle Status
+              </button>
 
-            <button
-              onClick={() => deleteTask(task.id)}
-              style={{
-                padding: "6px 12px",
-                background: "#dc3545",
-                color: "#fff",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Delete
-            </button>
+              <button
+                onClick={() => deleteTask(task.id)}
+                style={{
+                  padding: "6px 12px",
+                  background: "#dc3545",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>
-
       <br />
 
-      <div style={{ display: "flex", gap: "10px" }}>
-        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
-          Prev
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "15px",
+          marginTop: "30px",
+          padding: "15px",
+          background: "#ffffff",
+          borderRadius: "8px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+        }}
+      >
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          style={{
+            padding: "8px 16px",
+            background: page === 1 ? "#ccc" : "#0070f3",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: page === 1 ? "not-allowed" : "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          ◀ Prev
         </button>
 
-        <button onClick={() => setPage(page + 1)}>Next</button>
+        <span
+          style={{
+            fontWeight: "bold",
+            fontSize: "16px",
+            color: "#333",
+          }}
+        >
+          Page {page}
+        </span>
+
+        <button
+          onClick={() => setPage(page + 1)}
+          style={{
+            padding: "8px 16px",
+            background: "#28a745",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          Next ▶
+        </button>
       </div>
     </div>
   );

@@ -32,13 +32,15 @@ export const createTask = async (req, res) => {
 //update task
 export const updateTask = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, description, status } = req.body;
+    const { title, description, status, id } = req.body;
 
     const result = await pool.query(
       `UPDATE tasks
-       SET title=$1, description=$2, status=$3
-       WHERE id=$4 AND user_id=$5
+       SET
+         title = COALESCE($1, title),
+         description = COALESCE($2, description),
+         status = COALESCE($3, status)
+       WHERE id = $4 AND user_id = $5
        RETURNING *`,
       [title, description, status, id, req.userId],
     );
@@ -51,7 +53,11 @@ export const updateTask = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 };
 
